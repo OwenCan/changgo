@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.changgo</groupId>
-    <artifactId>chagngo.parent</artifactId>
+    <groupId>com.changgou</groupId>
+    <artifactId>chagngou.parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
@@ -13,6 +13,9 @@
         <module>changgou-service</module>
         <module>changgou-service-api</module>
         <module>changgou-web</module>
+        <module>changgou-eureka</module>
+        <module>changgou-common</module>
+        <module>changgou-common-db</module>
     </modules>
 
     <!--畅购商城的父工程-->
