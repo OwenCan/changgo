@@ -4,10 +4,11 @@ spring:
   application:
     name: goods
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.211.132:3306/changgou_goods?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/changgou?characterEncoding=UTF-8&serverTimezone=UTC
+#    url: jdbc:mysql://192.168.211.132:3306/changgou_goods?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
-    password: 123456
+    password: root
 eureka:
   client:
     service-url:
@@ -19,8 +20,8 @@ feign:
     enabled: true
 
 #mybatis的配置 可以不配置  需要整合通用mapper
-#mybatis:
-#  configuration:
-#    map-underscore-to-camel-case: true
-#  mapper-locations: classpath:mapper/*Mapper.xml
-#  type-aliases-package: com.changgou.goods.pojo
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.changgou.goods.pojo
