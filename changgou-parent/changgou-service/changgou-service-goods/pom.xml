@@ -3,33 +3,30 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>changgou.parent</artifactId>
+        <artifactId>changgou-service</artifactId>
         <groupId>com.changgou</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>changgou-service-api</artifactId>
-    <packaging>pom</packaging>
-    <description>所有微服务的api抽取(JavaBean,Feign)的父工程</description>
-    <modules>
-        <module>changgou-service-goods-api</module>
-    </modules>
+    <artifactId>changgou-service-goods</artifactId>
+
+    <description>
+        商品的微服务工程
+    </description>
 
     <dependencies>
-        <!--通用的common-->
+        <!--依赖来自定义的goods微服务的POJO 和feign-->
         <dependency>
             <groupId>com.changgou</groupId>
-            <artifactId>changgou-common</artifactId>
+            <artifactId>changgou-service-goods-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!--每个工程都有Pojo，都需要用到该包对应的注解-->
         <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-oauth2</artifactId>
         </dependency>
     </dependencies>
+
 
 </project>
