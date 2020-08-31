@@ -17,8 +17,12 @@ import java.util.List;
 @Service
 public class BrandServiceImpl implements BrandService {
 
+    private final BrandMapper brandMapper;
+
     @Autowired
-    private BrandMapper brandMapper;
+    public BrandServiceImpl(BrandMapper brandMapper) {
+        this.brandMapper = brandMapper;
+    }
 
     /**
      * 查询Brand全部数据
@@ -28,4 +32,82 @@ public class BrandServiceImpl implements BrandService {
     public List<Brand> findAll() {
         return brandMapper.selectAll();
     }
+
+    /**
+     * 根据ID查询
+     * @param id
+     * @return
+     */
+    @Override
+    public Brand findById(Integer id) {
+        return brandMapper.selectByPrimaryKey(id);
+    }
+
+    /**
+     * 增加
+     * @param brand
+     */
+    @Override
+    public void add(Brand brand){
+        brandMapper.insert(brand);
+    }
+
+    /**
+     * 修改
+     * @param brand
+     */
+    @Override
+    public void update(Brand brand){
+        brandMapper.updateByPrimaryKey(brand);
+    }
+
+    /**
+     * 删除
+     * @param id
+     */
+    @Override
+    public void delete(Integer id){
+        brandMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public List<Brand> findList(Brand brand) {
+        Example example = createExample(brand);
+        return brandMapper.selectByExample(example);
+    }
+
+    /**
+     * 构建查询对象
+     * @param brand
+     * @return
+     */
+    private Example createExample(Brand brand) {
+        Example example = new Example(Brand.class);
+        //条件构造器
+        Example.Criteria criteria = example.createCriteria();
+        if (brand != null) {
+            // 品牌名称
+            if(!StringUtils.isEmpty(brand.getName())){
+                criteria.andLike("name","%"+brand.getName()+"%");
+            }
+            // 品牌图片地址
+            if(!StringUtils.isEmpty(brand.getImage())){
+                criteria.andLike("image","%"+brand.getImage()+"%");
+            }
+            // 品牌的首字母
+            if(!StringUtils.isEmpty(brand.getLetter())){
+                criteria.andLike("letter","%"+brand.getLetter()+"%");
+            }
+            // 品牌id
+            if(!StringUtils.isEmpty(brand.getLetter())){
+                criteria.andEqualTo("id",brand.getId());
+            }
+            // 排序
+            if(!StringUtils.isEmpty(brand.getSeq())){
+                criteria.andEqualTo("seq",brand.getSeq());
+            }
+        }
+        return example;
+    }
+
 }
