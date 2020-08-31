@@ -2,9 +2,11 @@ package com.changgou.goods.controller;
 
 import com.changgou.goods.pojo.Brand;
 import com.changgou.goods.service.BrandService;
+import com.github.pagehelper.PageInfo;
 import entity.Result;
 import entity.StatusCode;
 
+import jdk.net.SocketFlow;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -103,4 +105,33 @@ public class BrandController {
         List<Brand> brands = brandService.findList(brand);
         return new Result<>(true, StatusCode.OK, "查询成功", brands);
     }
+
+    /**
+     * 分页查询
+     *
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping(value = "/search/{page}/{size}")
+    public Result<Brand> findPage(@PathVariable Integer page, @PathVariable Integer size) {
+        PageInfo<Brand> pageInfo = brandService.findPage(page, size);
+        return new Result<>(true, StatusCode.OK, "分页查询成功", pageInfo);
+    }
+
+    /**
+     * 分页查询
+     * required = false 标识传输标识可以false
+     *
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping(value = "/search/{page}/{size}")
+    public Result<Brand> findPage(@RequestBody(required = false) Brand brand,@PathVariable Integer page, @PathVariable Integer size) {
+        PageInfo<Brand> pageInfo = brandService.findPage(brand, page, size);
+        return new Result<>(true, StatusCode.OK, "分页查询成功", pageInfo);
+    }
+
+
 }

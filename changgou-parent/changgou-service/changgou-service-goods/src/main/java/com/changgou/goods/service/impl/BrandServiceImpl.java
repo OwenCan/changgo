@@ -70,10 +70,43 @@ public class BrandServiceImpl implements BrandService {
         brandMapper.deleteByPrimaryKey(id);
     }
 
+    /**
+     * 根据条件查询商品集合
+     *
+     * @param brand
+     * @return
+     */
     @Override
     public List<Brand> findList(Brand brand) {
         Example example = createExample(brand);
         return brandMapper.selectByExample(example);
+    }
+
+    /**
+     * 分页查询
+     *
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageInfo<Brand> findPage(int page, int size) {
+        PageHelper.startPage(page, size);
+        return new PageInfo<>(brandMapper.selectAll());
+    }
+
+    /**
+     * 分页查询
+     *
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageInfo<Brand> findPage(Brand brand,int page, int size) {
+        PageHelper.startPage(page, size);
+        Example example = createExample(brand);
+        return new PageInfo<>(brandMapper.selectByExample(example));
     }
 
     /**
