@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/update")
+@RequestMapping(value = "/upload")
 public class FileController {
 
     /**
@@ -32,7 +32,8 @@ public class FileController {
      * @param file
      * @return
      */
-    public Result update(@RequestParam("file") MultipartFile file) throws Exception {
+    @PostMapping
+    public Result upload(@RequestParam("file") MultipartFile file) throws Exception {
         //封装文件信息
         FastDFSFile fastDFSFile = new FastDFSFile(
                 file.getOriginalFilename(),
@@ -41,7 +42,8 @@ public class FileController {
         );
 
         //将文件上传到FastDFS中
-        FastDFSClient.update(fastDFSFile);
-        return new Result(true, StatusCode.OK, "上传成功");
+        String[] updates = FastDFSClient.update(fastDFSFile);
+        String url = "https://192.168.211.132:8080/" + updates[0] + "/" + updates[0];
+        return new Result(true, StatusCode.OK, "上传成功", url);
     }
 }

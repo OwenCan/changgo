@@ -35,4 +35,15 @@ public class FastDFSFile implements Serializable {
         this.content = content;
         this.ext = ext;
     }
+
+    public FastDFSFile() {
+    }
+
+    public FastDFSFile(String name, byte[] content, String ext, String md5, String author) {
+        this.name = name;
+        this.content = content;
+        this.ext = ext;
+        this.md5 = md5;
+        this.author = author;
+    }
 }
