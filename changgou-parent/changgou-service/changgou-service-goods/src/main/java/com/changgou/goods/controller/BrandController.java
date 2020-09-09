@@ -6,7 +6,7 @@ import com.github.pagehelper.PageInfo;
 import entity.Result;
 import entity.StatusCode;
 
-import jdk.net.SocketFlow;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,11 +22,8 @@ import java.util.List;
 @CrossOrigin()
 public class BrandController {
 
-    private final BrandService brandService;
-
-    public BrandController(BrandService brandService) {
-        this.brandService = brandService;
-    }
+    @Autowired
+    private BrandService brandService;
 
     /***
      * 查询Brand全部数据
@@ -53,8 +50,8 @@ public class BrandController {
      * @param id
      * @return
      */
-    @GetMapping
-    public Result<Brand> findById(Integer id) {
+    @GetMapping("/{id}")
+    public Result<Brand> findById(@PathVariable Integer id) {
         Brand brand = brandService.findById(id);
         return new Result<>(true, StatusCode.OK, "根据id查询成功", brand);
     }
@@ -65,7 +62,7 @@ public class BrandController {
      * @return
      */
     @PostMapping
-    public Result add(Brand brand) {
+    public Result add(@RequestBody Brand brand) {
         brandService.add(brand);
         return new Result(true, StatusCode.OK, "添加品牌成功");
     }
@@ -127,7 +124,7 @@ public class BrandController {
      * @param size
      * @return
      */
-    @GetMapping(value = "/search/{page}/{size}")
+    @PostMapping(value = "/search/{page}/{size}")
     public Result<Brand> findPage(@RequestBody(required = false) Brand brand,@PathVariable Integer page, @PathVariable Integer size) {
         PageInfo<Brand> pageInfo = brandService.findPage(brand, page, size);
         return new Result<>(true, StatusCode.OK, "分页查询成功", pageInfo);
