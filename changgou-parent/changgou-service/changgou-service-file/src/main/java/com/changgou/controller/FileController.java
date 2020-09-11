@@ -10,8 +10,6 @@ package com.changgou.controller;
 
 import com.changgou.file.FastDFSFile;
 import com.changgou.util.FastDFSClient;
-import entity.Result;
-import entity.StatusCode;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/upload")
 public class FileController {
 
     /**
@@ -32,8 +29,8 @@ public class FileController {
      * @param file
      * @return
      */
-    @PostMapping
-    public Result upload(@RequestParam("file") MultipartFile file) throws Exception {
+    @PostMapping(value = "/upload")
+    public String upload(@RequestParam("file") MultipartFile file) throws Exception {
         //封装文件信息
         FastDFSFile fastDFSFile = new FastDFSFile(
                 file.getOriginalFilename(),
@@ -43,7 +40,9 @@ public class FileController {
 
         //将文件上传到FastDFS中
         String[] updates = FastDFSClient.update(fastDFSFile);
-        String url = "https://192.168.211.132:8080/" + updates[0] + "/" + updates[0];
-        return new Result(true, StatusCode.OK, "上传成功", url);
+//        String url = "https://192.168.211.132:8080/" + updates[0] + "/" + updates[0];
+//        return new Result(true, StatusCode.OK, "上传成功", url);
+        return FastDFSClient.getTrackerUrl() + "/" + updates[0] + "/"
+                + updates[1];
     }
 }

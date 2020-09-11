@@ -16,6 +16,8 @@ import org.csource.fastdfs.TrackerClient;
 import org.csource.fastdfs.TrackerServer;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
+
 /**
  * @Description 文件操作
  * @Author Owen Zhao
@@ -63,4 +65,22 @@ public class FastDFSClient {
         return updateResults;
     }
 
+    /**
+     * 获取Tracker服务地址
+     * @return
+     */
+    public static String getTrackerUrl(){
+        try {
+            //创建TrackerClient对象
+            TrackerClient trackerClient = new TrackerClient();
+            //通过TrackerClient获取TrackerServer对象
+            TrackerServer trackerServer = trackerClient.getConnection();
+            //获取Tracker地址
+            return "http://" + trackerServer.getInetSocketAddress().getHostString()
+                    + ":" + ClientGlobal.getG_tracker_http_port();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
