@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileController {
 
     /**
-     * 文件上传
+     * 文件上传 重要
      *
      * @param file
      * @return
@@ -40,7 +40,7 @@ public class FileController {
 
         //将文件上传到FastDFS中
         String[] updates = FastDFSClient.update(fastDFSFile);
-//        String url = "https://192.168.211.132:8080/" + updates[0] + "/" + updates[0];
+        String url = FastDFSClient.getTrackerUrl()  + "/" + updates[0] + "/" + updates[1];
 //        return new Result(true, StatusCode.OK, "上传成功", url);
         return FastDFSClient.getTrackerUrl() + "/" + updates[0] + "/"
                 + updates[1];
