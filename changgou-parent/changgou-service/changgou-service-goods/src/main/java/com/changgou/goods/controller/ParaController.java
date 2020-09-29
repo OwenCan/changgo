@@ -25,6 +25,18 @@ public class ParaController {
     @Autowired
     private ParaService paraService;
 
+    /**
+     * 根据分类ID查询参数列表
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/category/{id}")
+    public Result<List<Para>> getByCategoryId(@PathVariable(value = "id")Integer id){
+        //根据分类ID查询对应的参数信息
+        List<Para> paras = paraService.findByCategoryId(id);
+        return new Result<>(true, StatusCode.OK, "查询分类对应的品牌成功！", paras);
+    }
+
     /***
      * Para分页条件搜索实现
      * @param para

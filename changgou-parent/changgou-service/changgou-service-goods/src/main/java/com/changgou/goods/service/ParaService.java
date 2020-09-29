@@ -13,6 +13,13 @@ import java.util.List;
 public interface ParaService {
 
     /***
+     * 根据分类ID查询参数列表
+     * @param id
+     * @return
+     */
+    List<Para> findByCategoryId(Integer id);
+
+    /***
      * Para多条件分页查询
      * @param para
      * @param page
