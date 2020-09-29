@@ -1,5 +1,7 @@
 package com.changgou.goods.service.impl;
+
 import com.changgou.goods.dao.CategoryMapper;
+import com.changgou.goods.pojo.Brand;
 import com.changgou.goods.pojo.Category;
 import com.changgou.goods.service.CategoryService;
 import com.github.pagehelper.PageHelper;
@@ -8,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import java.util.List;
+
 /****
- * @Author:admin
+ * @Author:shenkunlin
  * @Description:Category业务层接口实现类
  * @Date 2019/6/14 0:16
  *****/
@@ -20,6 +24,19 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryMapper categoryMapper;
 
+
+    /**
+     * 根据父节点获取商品信息
+     *
+     * @param pid
+     * @return
+     */
+    @Override
+    public List<Category> findByParentId(Integer pid) {
+        Category category = new Category();
+        category.setParentId(pid);
+        return categoryMapper.select(category);
+    }
 
     /**
      * Category条件+分页查询
@@ -155,17 +172,5 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> findAll() {
         return categoryMapper.selectAll();
-    }
-
-    @Override
-    public List<Category> findByParentId(Integer pid) {
-        //SELECT * from tb_category where parent_id=0
-
-        Category record = new Category();
-        record.setParentId(pid);//查询的条件  相当于 where parent_id=0
-        //record.setId(1);//where parent_id=0 and id = 1
-        List<Category> categoryList = categoryMapper.select(record);
-
-        return categoryList;
     }
 }

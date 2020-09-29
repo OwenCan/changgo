@@ -1,4 +1,5 @@
 package com.changgou.goods.service.impl;
+
 import com.changgou.goods.dao.BrandMapper;
 import com.changgou.goods.pojo.Brand;
 import com.changgou.goods.service.BrandService;
@@ -8,57 +9,102 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import java.util.List;
+
 /****
- * @Author:admin
+ * @Author:shenkunlin
  * @Description:Brand业务层接口实现类
  * @Date 2019/6/14 0:16
  *****/
 @Service
 public class BrandServiceImpl implements BrandService {
 
-    private final BrandMapper brandMapper;
-
     @Autowired
-    public BrandServiceImpl(BrandMapper brandMapper) {
-        this.brandMapper = brandMapper;
+    private BrandMapper brandMapper;
+
+
+    @Override
+    public List<Brand> findByCategory(Integer categoryId) {
+        return brandMapper.findByCategory(categoryId);
     }
 
     /**
-     * 查询Brand全部数据
+     * Brand条件+分页查询
+     * @param brand 查询条件
+     * @param page 页码
+     * @param size 页大小
+     * @return 分页结果
+     */
+    @Override
+    public PageInfo<Brand> findPage(Brand brand, int page, int size){
+        //分页
+        PageHelper.startPage(page,size);
+        //搜索条件构建
+        Example example = createExample(brand);
+        //执行搜索
+        return new PageInfo<Brand>(brandMapper.selectByExample(example));
+    }
+
+    /**
+     * Brand分页查询
+     * @param page
+     * @param size
      * @return
      */
     @Override
-    public List<Brand> findAll() {
-        return brandMapper.selectAll();
+    public PageInfo<Brand> findPage(int page, int size){
+        //静态分页
+        PageHelper.startPage(page,size);
+        //分页查询
+        return new PageInfo<Brand>(brandMapper.selectAll());
     }
 
     /**
-     * 根据ID查询
-     * @param id
+     * Brand条件查询
+     * @param brand
      * @return
      */
     @Override
-    public Brand findById(Integer id) {
-        return brandMapper.selectByPrimaryKey(id);
+    public List<Brand> findList(Brand brand){
+        //构建查询条件
+        Example example = createExample(brand);
+        //根据构建的条件查询数据
+        return brandMapper.selectByExample(example);
     }
 
-    /**
-     * 增加
-     * @param brand
-     */
-    @Override
-    public void add(Brand brand){
-        brandMapper.insert(brand);
-    }
 
     /**
-     * 修改
+     * Brand构建查询对象
      * @param brand
+     * @return
      */
-    @Override
-    public void update(Brand brand){
-        brandMapper.updateByPrimaryKey(brand);
+    public Example createExample(Brand brand){
+        Example example=new Example(Brand.class);
+        Example.Criteria criteria = example.createCriteria();
+        if(brand!=null){
+            // 品牌id
+            if(!StringUtils.isEmpty(brand.getId())){
+                    criteria.andEqualTo("id",brand.getId());
+            }
+            // 品牌名称
+            if(!StringUtils.isEmpty(brand.getName())){
+                    criteria.andLike("name","%"+brand.getName()+"%");
+            }
+            // 品牌图片地址
+            if(!StringUtils.isEmpty(brand.getImage())){
+                    criteria.andEqualTo("image",brand.getImage());
+            }
+            // 品牌的首字母
+            if(!StringUtils.isEmpty(brand.getLetter())){
+                    criteria.andEqualTo("letter",brand.getLetter());
+            }
+            // 排序
+            if(!StringUtils.isEmpty(brand.getSeq())){
+                    criteria.andEqualTo("seq",brand.getSeq());
+            }
+        }
+        return example;
     }
 
     /**
@@ -71,76 +117,39 @@ public class BrandServiceImpl implements BrandService {
     }
 
     /**
-     * 根据条件查询商品集合
-     *
+     * 修改Brand
      * @param brand
-     * @return
      */
     @Override
-    public List<Brand> findList(Brand brand) {
-        Example example = createExample(brand);
-        return brandMapper.selectByExample(example);
+    public void update(Brand brand){
+        brandMapper.updateByPrimaryKey(brand);
     }
 
     /**
-     * 分页查询
-     *
-     * @param page
-     * @param size
-     * @return
-     */
-    @Override
-    public PageInfo<Brand> findPage(int page, int size) {
-        PageHelper.startPage(page, size);
-        return new PageInfo<>(brandMapper.selectAll());
-    }
-
-    /**
-     * 分页查询
-     *
-     * @param page
-     * @param size
-     * @return
-     */
-    @Override
-    public PageInfo<Brand> findPage(Brand brand,int page, int size) {
-        PageHelper.startPage(page, size);
-        Example example = createExample(brand);
-        return new PageInfo<>(brandMapper.selectByExample(example));
-    }
-
-    /**
-     * 构建查询对象
+     * 增加Brand
      * @param brand
-     * @return
      */
-    private Example createExample(Brand brand) {
-        Example example = new Example(Brand.class);
-        //条件构造器
-        Example.Criteria criteria = example.createCriteria();
-        if (brand != null) {
-            // 品牌名称
-            if(!StringUtils.isEmpty(brand.getName())){
-                criteria.andLike("name","%"+brand.getName()+"%");
-            }
-            // 品牌图片地址
-            if(!StringUtils.isEmpty(brand.getImage())){
-                criteria.andLike("image","%"+brand.getImage()+"%");
-            }
-            // 品牌的首字母
-            if(!StringUtils.isEmpty(brand.getLetter())){
-                criteria.andLike("letter","%"+brand.getLetter()+"%");
-            }
-            // 品牌id
-            if(!StringUtils.isEmpty(brand.getLetter())){
-                criteria.andEqualTo("id",brand.getId());
-            }
-            // 排序
-            if(!StringUtils.isEmpty(brand.getSeq())){
-                criteria.andEqualTo("seq",brand.getSeq());
-            }
-        }
-        return example;
+    @Override
+    public void add(Brand brand){
+        brandMapper.insert(brand);
     }
 
+    /**
+     * 根据ID查询Brand
+     * @param id
+     * @return
+     */
+    @Override
+    public Brand findById(Integer id){
+        return  brandMapper.selectByPrimaryKey(id);
+    }
+
+    /**
+     * 查询Brand全部数据
+     * @return
+     */
+    @Override
+    public List<Brand> findAll() {
+        return brandMapper.selectAll();
+    }
 }
