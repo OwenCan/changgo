@@ -1,16 +1,25 @@
 package com.changgou.goods.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.changgou.goods.dao.BrandMapper;
+import com.changgou.goods.dao.CategoryMapper;
+import com.changgou.goods.dao.SkuMapper;
 import com.changgou.goods.dao.SpuMapper;
-import com.changgou.goods.pojo.Spu;
+import com.changgou.goods.pojo.*;
+import com.changgou.goods.service.CategoryService;
 import com.changgou.goods.service.SpuService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import entity.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import springfox.documentation.spring.web.json.Json;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /****
  * @Author:shenkunlin
@@ -23,6 +32,60 @@ public class SpuServiceImpl implements SpuService {
     @Autowired
     private SpuMapper spuMapper;
 
+    @Autowired
+    private IdWorker idWorker;
+
+    @Autowired
+    private CategoryMapper categoryMapper;
+
+    @Autowired
+    private BrandMapper brandMapper;
+
+    @Autowired
+    private SkuMapper skuMapper;
+
+    @Override
+    public Goods findGoodsById(Long spuId) {
+        Spu spu = new Spu();
+        spu.setId(spuId);
+        spuMapper.select(spu);
+
+        return null;
+    }
+
+    @Override
+    public void saveGoods(Goods goods) {
+        //增加Spu
+        Spu spu = goods.getSpu();
+        spu.setId(idWorker.nextId());
+
+        //增加Sku
+        Date date = new Date();
+        List<Sku> skus = goods.getSkuList();
+        Category category = categoryMapper.selectByPrimaryKey(spu.getCategory3Id());
+        Brand brand = brandMapper.selectByPrimaryKey(spu.getBrandId());
+        for (Sku sku : skus) {
+            StringBuilder name = new StringBuilder(sku.getName());
+            if (StringUtils.isEmpty(sku.getSpec())) {
+                sku.setSpec("{}");
+            }
+            Map<String, String> specMap  = JSON.parseObject(sku.getSpec(), Map.class);
+            for (Map.Entry<String, String> entry : specMap.entrySet()) {
+                name.append(" ").append(entry.getKey());
+            }
+            sku.setId(idWorker.nextId());
+            sku.setCreateTime(date);
+            sku.setUpdateTime(date);
+            sku.setCategoryId(spu.getCategory3Id());
+            sku.setCategoryName(category.getName());
+            sku.setBrandName(brand.getName());
+            sku.setSpuId(spu.getId());
+            sku.setName(name.toString());
+            skuMapper.insert(sku);
+        }
+
+
+    }
 
     /**
      * Spu条件+分页查询

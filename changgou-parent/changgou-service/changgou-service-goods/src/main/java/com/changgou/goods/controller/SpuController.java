@@ -1,11 +1,13 @@
 package com.changgou.goods.controller;
 
+import com.changgou.goods.pojo.Goods;
 import com.changgou.goods.pojo.Spu;
 import com.changgou.goods.service.SpuService;
 import com.github.pagehelper.PageInfo;
 import entity.Result;
 import entity.StatusCode;
 import io.swagger.annotations.*;
+import jdk.net.SocketFlow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,17 @@ public class SpuController {
 
     @Autowired
     private SpuService spuService;
+
+    /**
+     * 添加Goods
+     * @param goods
+     * @return
+     */
+    @PostMapping("/save")
+    public Result save(@RequestBody Goods goods) {
+        spuService.saveGoods(goods);
+        return new Result(true, StatusCode.OK, "保存成功");
+    }
 
     /***
      * Spu分页条件搜索实现
