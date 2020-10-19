@@ -169,4 +169,48 @@ public class SpuController {
         Goods goods = spuService.findGoodsById(id);
         return new Result<>(true, StatusCode.OK, "查询成功", goods);
     }
+
+    /**
+     * 审核
+     * @param id
+     * @return
+     */
+    @PutMapping("/audit/{id}")
+    public Result audit(@PathVariable Long id){
+        spuService.audit(id);
+        return new Result(true,StatusCode.OK,"审核成功");
+    }
+
+    /**
+     * 下架
+     * @param id
+     * @return
+     */
+    @PutMapping("/pull/{id}")
+    public Result pull(@PathVariable Long id){
+        spuService.pull(id);
+        return new Result(true,StatusCode.OK,"下架成功");
+    }
+
+    /**
+     * 商品上架
+     * @param id
+     * @return
+     */
+    @PutMapping("/put/{id}")
+    public Result put(@PathVariable Long id){
+        spuService.put(id);
+        return new Result(true,StatusCode.OK,"上架成功");
+    }
+
+    /**
+     *  批量上架
+     * @param ids
+     * @return
+     */
+    @PutMapping("/put/many")
+    public Result putMany(@RequestBody Long[] ids){
+        int count = spuService.putMany(ids);
+        return new Result(true,StatusCode.OK,"上架"+count+"个商品");
+    }
 }

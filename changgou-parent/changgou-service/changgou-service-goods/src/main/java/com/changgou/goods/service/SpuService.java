@@ -83,4 +83,24 @@ public interface SpuService {
      * @return
      */
     List<Spu> findAll();
+
+    /***
+     * 商品审核
+     * @param spuId
+     */
+    void audit(Long spuId);
+
+    /***
+     * 商品下架
+     * @param spuId
+     */
+    void pull(Long spuId);
+
+    /***
+     * 商品上架
+     * @param spuId
+     */
+    void put(Long spuId);
+
+    int putMany(Long[] ids);
 }

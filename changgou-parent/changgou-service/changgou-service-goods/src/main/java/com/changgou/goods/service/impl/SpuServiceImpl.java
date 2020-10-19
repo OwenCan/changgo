@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -302,4 +303,79 @@ public class SpuServiceImpl implements SpuService {
     public List<Spu> findAll() {
         return spuMapper.selectAll();
     }
+
+    /***
+     * 商品审核
+     * @param spuId
+     */
+    @Override
+    public void audit(Long spuId) {
+        //查询商品
+        Spu spu = spuMapper.selectByPrimaryKey(spuId);
+        //判断商品是否已经删除
+        if (spu.getIsDelete().equalsIgnoreCase("1")) {
+            throw new RuntimeException("该商品已经删除！");
+        }
+        //实现上架和审核
+        spu.setStatus("1"); //审核通过
+        spu.setIsMarketable("1"); //上架
+        spuMapper.updateByPrimaryKeySelective(spu);
+    }
+
+    /**
+     * 商品下架
+     *
+     * @param spuId
+     */
+    @Override
+    public void pull(Long spuId) {
+        Spu spu = spuMapper.selectByPrimaryKey(spuId);
+        if (spu.getIsDelete().equals("1")) {
+            throw new RuntimeException("此商品已删除！");
+        }
+        spu.setIsMarketable("0");//下架状态
+        spuMapper.updateByPrimaryKeySelective(spu);
+    }
+
+    /***
+     * 商品上架
+     * @param spuId
+     */
+    @Override
+    public void put(Long spuId) {
+        Spu spu = spuMapper.selectByPrimaryKey(spuId);
+        //检查是否删除的商品
+        if(spu.getIsDelete().equals("1")){
+            throw new RuntimeException("此商品已删除！");
+        }
+        if(!spu.getStatus().equals("1")){
+            throw new RuntimeException("未通过审核的商品不能！");
+        }
+        //上架状态
+        spu.setIsMarketable("1");
+        spuMapper.updateByPrimaryKeySelective(spu);
+    }
+
+    /***
+     * 批量上架
+     * @param ids:需要上架的商品ID集合
+     * @return
+     */
+    @Override
+    public int putMany(Long[] ids) {
+        Spu spu=new Spu();
+        spu.setIsMarketable("1");//上架
+        //批量修改
+        Example example=new Example(Spu.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("id", Arrays.asList(ids));//id
+        //下架
+        criteria.andEqualTo("isMarketable","0");
+        //审核通过的
+        criteria.andEqualTo("status","1");
+        //非删除的
+        criteria.andEqualTo("isDelete","0");
+        return spuMapper.updateByExampleSelective(spu, example);
+    }
+
 }
