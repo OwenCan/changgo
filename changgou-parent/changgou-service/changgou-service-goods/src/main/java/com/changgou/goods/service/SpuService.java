@@ -102,5 +102,19 @@ public interface SpuService {
      */
     void put(Long spuId);
 
+    /**
+     * 批量上架
+     *
+     * @param ids
+     * @return
+     */
     int putMany(Long[] ids);
+
+    /**
+     * 批量下架
+     *
+     * @param ids
+     * @return
+     */
+    int downMany(Long[] ids);
 }

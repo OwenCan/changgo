@@ -213,4 +213,15 @@ public class SpuController {
         int count = spuService.putMany(ids);
         return new Result(true,StatusCode.OK,"上架"+count+"个商品");
     }
+
+    /**
+     *  批量下架
+     * @param ids
+     * @return
+     */
+    @PutMapping("/down/many")
+    public Result downMany(@RequestBody Long[] ids){
+        int count = spuService.putMany(ids);
+        return new Result(true,StatusCode.OK,"上架"+count+"个商品");
+    }
 }
