@@ -14,6 +14,7 @@
     <description>所有微服务的api抽取(JavaBean,Feign)的父工程</description>
     <modules>
         <module>changgou-service-goods-api</module>
+        <module>changgou-service-content-api</module>
     </modules>
 
     <dependencies>
