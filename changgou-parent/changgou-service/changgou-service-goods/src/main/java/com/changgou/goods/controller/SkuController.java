@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /****
  * @Author:shenkunlin
@@ -154,5 +155,15 @@ public class SkuController {
     public Result<List<Sku>> findByStatus(@PathVariable String status){
         List<Sku> list = skuService.findByStatus(status);
         return new Result<>(true, StatusCode.OK, "查询成功", list);
+    }
+
+    /**
+     * 搜索
+     * @param searchMap
+     * @return
+     */
+    @PostMapping
+    public Map search(@RequestBody(required = false) Map searchMap){
+        return  skuService.search(searchMap);
     }
 }

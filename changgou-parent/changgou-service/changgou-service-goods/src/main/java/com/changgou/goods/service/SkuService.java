@@ -4,6 +4,7 @@ import com.changgou.goods.pojo.Sku;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
+import java.util.Map;
 
 /****
  * @Author:shenkunlin
@@ -73,4 +74,11 @@ public interface SkuService {
      * @return
      */
     List<Sku> findByStatus(String status);
+
+    /***
+     * 搜索 涉及到品牌、分类、规格等
+     * @param searchMap
+     * @return
+     */
+    Map search(Map<String, String> searchMap);
 }

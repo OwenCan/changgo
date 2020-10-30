@@ -5,12 +5,20 @@ import com.changgou.goods.pojo.Sku;
 import com.changgou.goods.service.SkuService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.search.SkuInfo;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /****
  * @Author:shenkunlin
@@ -22,6 +30,9 @@ public class SkuServiceImpl implements SkuService {
 
     @Autowired
     private SkuMapper skuMapper;
+
+    @Autowired
+    private ElasticsearchTemplate esTemplate;
 
 
     /**
@@ -219,4 +230,31 @@ public class SkuServiceImpl implements SkuService {
         sku.setStatus(status);
         return skuMapper.select(sku);
     }
+
+    @Override
+    public Map search(Map<String, String> searchMap) {
+        String keyWord = searchMap.get("keyword");
+        if (StringUtils.isEmpty(keyWord)) {
+            keyWord = "华为";
+        }
+        //2、创建查询对象的构建对象
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+
+        //3、创建查询条件
+        queryBuilder.withQuery(QueryBuilders.matchQuery("name", keyWord));
+
+        //4、构造查询对象
+        NativeSearchQuery query = queryBuilder.build();
+        //5、执行查询
+        AggregatedPage<SkuInfo> skuPage = esTemplate.queryForPage(query, SkuInfo.class);
+
+        Map resultMap = new HashMap();
+        resultMap.put("rows", skuPage.getContent());
+        resultMap.put("total", skuPage.getTotalElements());
+        resultMap.put("totalPage", skuPage.getTotalPages());
+
+        return resultMap;
+    }
+
+
 }
