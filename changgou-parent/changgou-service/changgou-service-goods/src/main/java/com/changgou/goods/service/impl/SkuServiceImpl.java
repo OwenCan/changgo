@@ -7,6 +7,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.search.SkuInfo;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -241,19 +244,45 @@ public class SkuServiceImpl implements SkuService {
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
 
         //3、创建查询条件
+        //设置分组条件  商品分类
+        queryBuilder.addAggregation(AggregationBuilders.terms("skuCategorygroup").field("categoryName").size(50));
         queryBuilder.withQuery(QueryBuilders.matchQuery("name", keyWord));
+
 
         //4、构造查询对象
         NativeSearchQuery query = queryBuilder.build();
         //5、执行查询
         AggregatedPage<SkuInfo> skuPage = esTemplate.queryForPage(query, SkuInfo.class);
 
+        //获取分组结果
+        StringTerms stringTerms = (StringTerms) skuPage.getAggregation("skuCategorygroup");
+        List<String> categoryList = getStringsCategoryList(stringTerms);
+
+        //返回结果
         Map resultMap = new HashMap();
+        resultMap.put("categoryList", categoryList);
         resultMap.put("rows", skuPage.getContent());
         resultMap.put("total", skuPage.getTotalElements());
         resultMap.put("totalPage", skuPage.getTotalPages());
 
         return resultMap;
+    }
+
+    /**
+     * 获取分类列表数据
+     *
+     * @param stringTerms
+     * @return
+     */
+    private List<String> getStringsCategoryList(StringTerms stringTerms) {
+        List<String> categoryList = new ArrayList<>();
+        if (stringTerms != null) {
+            for (StringTerms.Bucket bucket : stringTerms.getBuckets()) {
+                String keyAsString = bucket.getKeyAsString();//分组的值
+                categoryList.add(keyAsString);
+            }
+        }
+        return categoryList;
     }
 
 
