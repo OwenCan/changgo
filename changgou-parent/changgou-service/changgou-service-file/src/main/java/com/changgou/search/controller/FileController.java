@@ -6,7 +6,7 @@
  * @我的课程 $ http://imooc.com/t/4294850
  * @创建时间 2020/9/1 18:33
  */
-package com.changgou.controller;
+package com.changgou.search.controller;
 
 import com.changgou.file.FastDFSFile;
 import com.changgou.util.FastDFSClient;
