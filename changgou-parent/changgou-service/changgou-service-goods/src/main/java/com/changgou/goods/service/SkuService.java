@@ -75,10 +75,4 @@ public interface SkuService {
      */
     List<Sku> findByStatus(String status);
 
-    /***
-     * 搜索 涉及到品牌、分类、规格等
-     * @param searchMap
-     * @return
-     */
-    Map search(Map<String, String> searchMap);
 }
