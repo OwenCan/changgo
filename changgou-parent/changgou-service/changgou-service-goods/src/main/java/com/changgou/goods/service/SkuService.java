@@ -75,4 +75,5 @@ public interface SkuService {
      */
     List<Sku> findByStatus(String status);
 
+    Map search(Map searchMap);
 }
